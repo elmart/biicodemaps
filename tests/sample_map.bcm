@@ -1,0 +1,10 @@
+# A sample map
+
+[cities]
+A, 0.5, -1.2
+B, -3.2, 0.8
+C, 5, 5
+
+[roads]
+A, B
+B, C
