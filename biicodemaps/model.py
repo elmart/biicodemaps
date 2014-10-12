@@ -17,6 +17,8 @@ two reasons:
 
 '''
 
+import math
+
 
 class City(object):
     '''A city with a name and a location in cartesian coordinates.
@@ -64,6 +66,7 @@ class Road(object):
     Attrs:
         city_1
         city_2
+        length
     '''
     def __init__(self, city_1, city_2):
         '''Road constructor.
@@ -89,6 +92,19 @@ class Road(object):
     @property
     def city_2(self):
         return self._city_2
+
+    @property
+    def length(self):
+        return math.sqrt((self.city_1.x - self.city_2.x) ** 2 +
+                         (self.city_1.y - self.city_2.y) ** 2)
+
+    def other_end(self, city):
+        '''Return the other end of this road that is not the passed city.'''
+        if city == self.city_1:
+            return self.city_2
+        if city == self.city_2:
+            return self.city_1
+        raise ValueError('City %s does not belong to road' % city.name)
 
 
 class Map(object):
