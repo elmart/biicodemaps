@@ -1,8 +1,9 @@
 import os
-from biicodemaps.builders import BCMStringMapBuilder, BCMFileMapBuilder
+from biicodemaps.builders import (BCMStringMapBuilder, BCMFileMapBuilder,
+                                  RETStringMapBuilder, RETFileMapBuilder)
 
 
-class TestBuildingFromString:
+class TestBuildingFromBCMString:
     def test_works_with_correct_input(self):
         map_ = BCMStringMapBuilder('''
                                    # A sample map
@@ -23,7 +24,57 @@ class TestBuildingFromString:
         assert len(city.roads) == 2
 
 
-class TestBuildingFromFile:
+class TestBuildingFromBCMFile:
     def test_loads_ok(self):
         BCMFileMapBuilder(os.path.join(os.path.dirname(__file__),
                                        'sample_map.bcm')).build()
+
+
+class TestBuildingFromRETString:
+    def test_diagonal(self):
+        map_, spec = RETStringMapBuilder('''
+                                   |           |
+                                   |  o        |
+                                   |     x     |
+                                   |      x    |
+                                   |       x   |
+                                   |           |
+                                   |  x        |
+                                   |  x        |
+                                   |  xxx      |
+                                   |           |
+                                   |           |
+                                   ''').build()
+        assert spec['origin'] == (2, 1)
+        assert len(map_.cities) == 113
+        assert len(map_.roads) == 363
+        for coords in [(3, -1), (4, -2), (5, -3), (0, -5),
+                       (0, -6), (0, -7), (1, -7), (2, -7)]:
+            assert not map_.city('%s:%s' % coords)
+
+    def test_non_diagonal(self):
+        map_, spec = RETStringMapBuilder('''
+                                   |           |
+                                   |  o        |
+                                   |     x     |
+                                   |      x    |
+                                   |       x   |
+                                   |           |
+                                   |  x        |
+                                   |  x        |
+                                   |  xxx      |
+                                   |           |
+                                   |           |
+                                   ''', diagonal=False).build()
+        assert spec['origin'] == (2, 1)
+        assert len(map_.cities) == 113
+        assert len(map_.roads) == 192
+        for coords in [(3, -1), (4, -2), (5, -3), (0, -5),
+                       (0, -6), (0, -7), (1, -7), (2, -7)]:
+            assert not map_.city('%s:%s' % coords)
+
+
+class TestBuildingFromRETFile:
+    def test_loads_ok(self):
+        RETFileMapBuilder(os.path.join(os.path.dirname(__file__),
+                                       'sample_map.ret')).build()
