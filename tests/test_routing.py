@@ -2,10 +2,12 @@ from math import sqrt
 from pytest import fixture, mark
 from biicodemaps.model import Map
 from biicodemaps.builders import RETStringMapBuilder
-from biicodemaps.routing import shortest_path_dijkstra_original
+from biicodemaps.routing import (shortest_path_dijkstra_original,
+                                 shortest_path_dijkstra_priority_queue)
 
 
-algorithms = [shortest_path_dijkstra_original]
+algorithms = [shortest_path_dijkstra_original,
+              shortest_path_dijkstra_priority_queue]
 
 
 ret_specs = [
