@@ -3,7 +3,8 @@ Routing services to calculate paths in maps.
 
 '''
 
-import itertools
+from math import sqrt
+from itertools import count
 from heapq import heappop, heappush
 
 
@@ -20,7 +21,7 @@ def _safe_cities(map_, origin_city_name, destination_city_name):
 
 
 def _results(origin_city, destination_city, previous_city, cost):
-    if not previous_city[destination_city]:
+    if not previous_city.get(destination_city):
         if origin_city == destination_city:
             return [origin_city.name], 0
         else:
@@ -29,7 +30,7 @@ def _results(origin_city, destination_city, previous_city, cost):
     path, city = [], destination_city
     while True:
         path.insert(0, city.name)
-        city = previous_city[city]
+        city = previous_city.get(city)
         if not city:
             break
 
@@ -116,6 +117,63 @@ def shortest_path_dijkstra_priority_queue(map_,
     return _results(origin_city, destination_city, previous_city, cost)
 
 
+def shortest_path_a_star(map_, origin_city_name, destination_city_name):
+    '''
+    Find shortest path using A* algorithm.
+
+    [http://en.wikipedia.org/wiki/A*_search_algorithm]
+
+    '''
+
+    def euclidean_distance(city_1, city_2):
+        return sqrt((city_1.x - city_2.x) ** 2 + (city_1.y - city_2.y) ** 2)
+
+    origin_city, destination_city = _safe_cities(map_, origin_city_name,
+                                                 destination_city_name)
+
+    # Initialize data structures
+    closed_set, open_set, previous_city = set(), PriorityQueue(), {}
+    cost_from_origin, estimated_total_cost = {}, {}
+
+    cost_from_origin[origin_city] = 0
+    estimated_total_cost[origin_city] = (cost_from_origin[origin_city] +
+                                         euclidean_distance(origin_city,
+                                                            destination_city))
+    open_set.push(origin_city, priority=estimated_total_cost[origin_city])
+
+    # Main loop
+    while open_set:
+        # get city in open set with minimum estimated cost
+        city = open_set.pop()
+        closed_set.add(city)
+
+        if (city == destination_city):
+            break
+
+        # update neighbours' costs
+        for road in city.roads:
+            neighbour_city = road.other_end(city)
+            if neighbour_city in closed_set:
+                continue
+            neighbour_city_new_cost = cost_from_origin[city] + road.length
+
+            if (neighbour_city not in open_set or
+                    neighbour_city_new_cost < cost_from_origin[neighbour_city]):
+
+                cost_from_origin[neighbour_city] = neighbour_city_new_cost
+                estimated_total_cost[neighbour_city] = (
+                    cost_from_origin[neighbour_city]
+                    + euclidean_distance(neighbour_city, destination_city))
+                previous_city[neighbour_city] = city
+
+                if neighbour_city not in open_set:
+                    open_set.push(neighbour_city,
+                                  priority=estimated_total_cost[neighbour_city])
+
+    return _results(origin_city, destination_city,
+                    previous_city, cost_from_origin)
+
+
 class PriorityQueue(object):
     '''
     A priority queue implemented on top of heapq.
@@ -131,7 +189,7 @@ class PriorityQueue(object):
     def __init__(self):
         self.queue = []                   # list of entries arranged in a heap
         self.entries = {}                 # mapping from values to entries
-        self.counter = itertools.count()  # unique sequence count
+        self.counter = count()  # unique sequence count
 
     def push(self, value, priority=0):
         '''Add a new value or update the priority of an existing value.'''
@@ -155,3 +213,9 @@ class PriorityQueue(object):
                 del self.entries[value]
                 return value
         raise KeyError('Pop called on empty priority queue.')
+
+    def __len__(self):
+        return len(self.entries)
+
+    def __contains__(self, value):
+        return value in self.entries

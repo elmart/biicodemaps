@@ -75,6 +75,12 @@ expected resulting path. We could also leave out the @'s if we only want to
 state a problem and ask for the answer. The full form (including expected
 resulting path) is mainly to be used with automated tests.
 
+Note: In the usual case that there are several shortest paths, the same
+algorithm will always choose the same one among them. But, if you test the same
+spec against different algorithms, they can choose different ones. So, to test
+different algorithms against the same spec, you can add as many @ symbols as
+needed to cover all needed resulting paths.
+
 '''
 
 from biicodemaps.model import Map

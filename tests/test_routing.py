@@ -3,39 +3,41 @@ from pytest import fixture, mark
 from biicodemaps.model import Map
 from biicodemaps.builders import RETStringMapBuilder
 from biicodemaps.routing import (shortest_path_dijkstra_original,
-                                 shortest_path_dijkstra_priority_queue)
+                                 shortest_path_dijkstra_priority_queue,
+                                 shortest_path_a_star)
 
 
 algorithms = [shortest_path_dijkstra_original,
-              shortest_path_dijkstra_priority_queue]
+              shortest_path_dijkstra_priority_queue,
+              shortest_path_a_star]
 
 
 ret_specs = [
     '''
     |           |
     |$          |
-    | @         |
-    |  @        |
-    |   @       |
-    |    @o     |
-    |     @     |
-    |      @    |
+    |@@         |
+    | @@        |
+    |  @@       |
+    |   @@o     |
+    |    @@     |
+    |     @@    |
     |xxxxxx@    |
-    |     @     |
+    | @@@@@     |
     |#@@@@      |
 
     ''',
     '''
     |         x$|
     |         x@|
-    |         @ |
+    |    @@@@@@ |
     |   @@@@@@  |
     |  @x       |
     |  @x o     |
     |  @xxxxxxxx|
-    |   @@@@    |
+    |   @@@     |
     |xxxxxx@    |
-    |     @     |
+    | @@@@@     |
     |#@@@@      |
 
     '''
