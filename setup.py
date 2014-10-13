@@ -2,11 +2,13 @@
 
 
 from distutils.core import setup
+from version import version
 
 
 setup(name='biicodemaps',
-      version='0.1',
+      version=version,
       description='Map routing utilities',
       author='Eliseo Martínez',
       author_email='eliseomarmol@gmail.com',
-      packages=['biicodemaps'])
+      packages=['biicodemaps'],
+      entry_points={'console_scripts': ['bcm = biicodemaps.tool:main']})

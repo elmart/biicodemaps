@@ -91,6 +91,8 @@ class BCMStreamMapBuilder(object):
     '''A builder that constructs a map from a BCM format stream.'''
     def __init__(self, stream):
         self.stream = stream
+        self.format_ = 'bcm'
+        self.input_type = 'stream'
 
     def build(self):
         map_, state, line_number = Map(), None, 0
@@ -132,6 +134,8 @@ class BCMFileMapBuilder(BCMStreamMapBuilder):
     '''A builder that constructs a map from a BCM format file.'''
     def __init__(self, file_name):
         self.file_name = file_name
+        self.format_ = 'bcm'
+        self.input_type = 'file'
 
     def build(self):
         with open(self.file_name) as f:
@@ -143,6 +147,8 @@ class BCMStringMapBuilder(BCMStreamMapBuilder):
     '''A builder that constructs a map from a BCM format string.'''
     def __init__(self, string_):
         self.string_ = string_
+        self.format_ = 'bcm'
+        self.input_type = 'string'
 
     def build(self):
         self.stream = self.string_.splitlines()
@@ -154,6 +160,8 @@ class RETStreamMapBuilder(object):
     def __init__(self, stream, diagonal=True):
         self.stream = stream
         self.diagonal = diagonal
+        self.format_ = 'ret'
+        self.input_type = 'stream'
 
     def build(self):
         rows, columns, origin, missing, start, end, expected = self._scan()
@@ -288,6 +296,8 @@ class RETFileMapBuilder(RETStreamMapBuilder):
     def __init__(self, file_name, diagonal=True):
         self.file_name = file_name
         self.diagonal = diagonal
+        self.format_ = 'ret'
+        self.input_type = 'file'
 
     def build(self):
         with open(self.file_name) as f:
@@ -300,7 +310,24 @@ class RETStringMapBuilder(RETStreamMapBuilder):
     def __init__(self, string_, diagonal=True):
         self.string_ = string_
         self.diagonal = diagonal
+        self.format_ = 'ret'
+        self.input_type = 'string'
 
     def build(self):
         self.stream = self.string_.splitlines()
         return super(RETStringMapBuilder, self).build()
+
+
+formats = ('bcm', 'ret')
+
+input_types = ('stream', 'file', 'string')
+
+builders = {
+    ('bcm', 'stream'): BCMStreamMapBuilder,
+    ('bcm', 'file'): BCMFileMapBuilder,
+    ('bcm', 'string'): BCMStringMapBuilder,
+    ('ret', 'stream'): RETStreamMapBuilder,
+    ('ret', 'file'): RETFileMapBuilder,
+    ('ret', 'string'): RETStringMapBuilder
+}
+'''A map from (format, input_type) to builder.'''

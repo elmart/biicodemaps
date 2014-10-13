@@ -220,3 +220,11 @@ class PriorityQueue(object):
 
     def __contains__(self, value):
         return value in self.entries
+
+
+algorithms = {
+    'dij-o': shortest_path_dijkstra_original,
+    'dij-pq': shortest_path_dijkstra_priority_queue,
+    'a-star': shortest_path_a_star
+}
+'''A map from names to algorithms.'''
