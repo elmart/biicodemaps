@@ -235,8 +235,10 @@ class RETStreamMapBuilder(object):
         if expected and not (start and end):
             raise BiiCodeMapsError('Start or end not specified.')
 
-        expected.insert(0, start)
-        expected.append(end)
+        if start:
+            expected.insert(0, start)
+        if end:
+            expected.append(end)
 
         return rows, columns, origin, missing, start, end, expected
 
