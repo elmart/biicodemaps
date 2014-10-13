@@ -83,6 +83,7 @@ needed to cover all needed resulting paths.
 
 '''
 
+from biicodemaps.error import BiiCodeMapsError
 from biicodemaps.model import Map
 
 
@@ -107,20 +108,21 @@ class BCMStreamMapBuilder(object):
             if state == 'reading_cities':
                 items = line.split(',')
                 if len(items) != 3:
-                    raise Exception('Wrong number of items at line %s.' %
-                                    line_number)
+                    raise BiiCodeMapsError('Wrong number of items at line %s.' %
+                                           line_number)
                 name, x, y = items[0].strip(), items[1], items[2]
                 try:
                     x = float(x)
                     y = float(y)
                 except ValueError:
-                    raise Exception('Wrong format at line %s.' % line_number)
+                    raise BiiCodeMapsError('Wrong format at line %s.' %
+                                           line_number)
                 map_.create_city(name, x, y)
             if state == 'reading_roads':
                 items = line.split(',')
                 if len(items) != 2:
-                    raise Exception('Wrong number of items at line %s.' %
-                                    line_number)
+                    raise BiiCodeMapsError('Wrong number of items at line %s.' %
+                                           line_number)
                 city_1, city_2 = items[0].strip(), items[1].strip()
                 map_.create_road(city_1, city_2)
         return map_
@@ -202,14 +204,14 @@ class RETStreamMapBuilder(object):
             rows += 1
 
             if not (line.startswith('|') and line.endswith('|')):
-                raise Exception('Wrong format (missing bar) at line %s.' %
-                                line_number)
+                raise BiiCodeMapsError('Wrong format (missing bar) at line %s.'
+                                       % line_number)
 
             if columns is None:
                 columns = len(line) - 2
             if len(line) - 2 != columns:
-                raise Exception('Wrong number of items at line %s.' %
-                                line_number)
+                raise BiiCodeMapsError('Wrong number of items at line %s.' %
+                                       line_number)
 
             for column, character in enumerate(line[1:-1]):
                 origin, start, end = self._process_position(
@@ -220,10 +222,10 @@ class RETStreamMapBuilder(object):
             origin = (0, rows - 1)  # default origin at bottom left corner
 
         if bool(start) != bool(end):
-            raise Exception('Only one of start/end specified.')
+            raise BiiCodeMapsError('Only one of start/end specified.')
 
         if expected and not (start and end):
-            raise Exception('Start or end not specified.')
+            raise BiiCodeMapsError('Start or end not specified.')
 
         expected.insert(0, start)
         expected.append(end)
@@ -239,24 +241,24 @@ class RETStreamMapBuilder(object):
             if not start:
                 start = (column, row)
             else:
-                raise Exception('More than one start node.')
+                raise BiiCodeMapsError('More than one start node.')
         elif character == '@':
             expected.append((column, row))
         elif character == '$':
             if not end:
                 end = (column, row)
             else:
-                raise Exception('More than one end node.')
+                raise BiiCodeMapsError('More than one end node.')
         elif character == 'o':
             if not origin:
                 origin = (column, row)
             else:
-                raise Exception('More than one coordinates origin.')
+                raise BiiCodeMapsError('More than one coordinates origin.')
         elif character == 'x':
             missing.append((column, row))
         else:
-            raise Exception('Unknown character %s at line %s col %s'
-                            % (character, line_number, column + 1))
+            raise BiiCodeMapsError('Unknown character %s at line %s col %s' %
+                                   (character, line_number, column + 1))
 
         return origin, start, end
 

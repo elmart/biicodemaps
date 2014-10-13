@@ -6,16 +6,17 @@ Routing services to calculate paths in maps.
 from math import sqrt
 from itertools import count
 from heapq import heappop, heappush
+from biicodemaps.error import BiiCodeMapsError
 
 
 def _safe_cities(map_, origin_city_name, destination_city_name):
     origin_city = map_.city(origin_city_name)
     if not origin_city:
-        raise ValueError('Unknow city: %s.' % origin_city_name)
+        raise BiiCodeMapsError('Unknown city: %s.' % origin_city_name)
 
     destination_city = map_.city(destination_city_name)
     if not destination_city:
-        raise ValueError('Unknow city: %s.' % destination_city_name)
+        raise BiiCodeMapsError('Unknown city: %s.' % destination_city_name)
 
     return origin_city, destination_city
 
@@ -212,7 +213,7 @@ class PriorityQueue(object):
             if value is not self.REMOVED:
                 del self.entries[value]
                 return value
-        raise KeyError('Pop called on empty priority queue.')
+        raise BiiCodeMapsError('Pop called on empty priority queue.')
 
     def __len__(self):
         return len(self.entries)

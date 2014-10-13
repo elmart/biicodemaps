@@ -18,6 +18,7 @@ two reasons:
 '''
 
 import math
+from biicodemaps.error import BiiCodeMapsError
 
 
 class City(object):
@@ -35,11 +36,11 @@ class City(object):
         Use Map.create_city instead.
         '''
         if not name:
-            raise ValueError('Empty name')
+            raise BiiCodeMapsError('Empty name')
         if x is None:
-            raise ValueError('Empty x')
+            raise BiiCodeMapsError('Empty x')
         if y is None:
-            raise ValueError('Empty y')
+            raise BiiCodeMapsError('Empty y')
         self.name = name
         self.x = x
         self.y = y
@@ -75,10 +76,11 @@ class Road(object):
         Use Map.create_road instead.
         '''
         if city_1 is city_2:
-            raise ValueError('Cities cannot be the same: %s' % city_1.name)
+            raise BiiCodeMapsError('Cities cannot be the same: %s' %
+                                   city_1.name)
 
         if city_1.has_road_to(city_2):
-            raise ValueError('Road already exists')
+            raise BiiCodeMapsError('Road already exists')
 
         self._city_1 = city_1
         self._city_2 = city_2
@@ -104,7 +106,7 @@ class Road(object):
             return self.city_2
         if city == self.city_2:
             return self.city_1
-        raise ValueError('City %s does not belong to road' % city.name)
+        raise BiiCodeMapsError('City %s does not belong to road' % city.name)
 
 
 class Map(object):
@@ -138,7 +140,7 @@ class Map(object):
 
     def create_city(self, name, x, y):
         if name in self._cities:
-            raise ValueError('Name already exists')
+            raise BiiCodeMapsError('Name already exists')
         city = City(name, x, y)
         self._cities[name] = city
         return city
@@ -146,11 +148,11 @@ class Map(object):
     def create_road(self, city_1_name, city_2_name):
         city_1 = self.city(city_1_name)
         if not city_1:
-            raise ValueError('Unknown city %s' % city_1_name)
+            raise BiiCodeMapsError('Unknown city %s' % city_1_name)
 
         city_2 = self.city(city_2_name)
         if not city_2:
-            raise ValueError('Unknown city %s' % city_2_name)
+            raise BiiCodeMapsError('Unknown city %s' % city_2_name)
 
         road = Road(city_1, city_2)
         self._roads.append(road)
