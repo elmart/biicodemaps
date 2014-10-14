@@ -13,6 +13,38 @@ BiiCodeMaps supports:
 - Checking algorithms against expected results included in files.
 
 
+## Install
+- Install requirements:  
+BiiCodeMaps needs **docopt** and **pytest** installed (the last one only if
+  you want to run tests). To quickly install them, you can
+  `pip install -r requirements.txt`.  
+  We encourage doing this within a virtualenv, but you can do it system-wide
+  (maybe using `sudo` depending on your system) if you prefer.
+- Clone this project:  
+`git clone https://github.com/elmart/biicodemaps.git`.
+- Run tests to see everything is ok.  
+`cd biicodemaps`  
+`py.test`
+- Install this package:  
+`pip install -e .`
+
+
+## Examples
+
+Try, for example:  
+`bcm path A C tests/sample_map.bcm` to solve route from nodes you specify.  
+Note you can also pipe data to bcm:  
+`cat tests/sample_map.bcm | bcm path A C --format=bcm`
+
+For a more interesting example, solve routes specified within files
+themselves, using all algorithms available, and benchmarking them:
+`bcm solve -a all -t tests/test_1.ret`.
+
+Or check all implemented algorithms are correct (they match expected results
+  specified in files):
+`bcm check -a all tests/test_*.ret`
+
+
 ## Usage
 ```
 BiiCodeMaps: Map routing problems for the masses.
@@ -59,6 +91,7 @@ Commands:
     help   Show this help.
 ```
 
+
 ## Input data formats
 
 ### BCM format
@@ -77,7 +110,6 @@ BCM format is of the form:
 
 Comments and blank lines can appear at any position.
 Cities must come before roads.
-
 
 ### RET format
 
