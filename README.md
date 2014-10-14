@@ -22,12 +22,11 @@ BiiCodeMaps needs **docopt** and **pytest** installed (the last one only if
   (maybe using `sudo` depending on your system) if you prefer.
 - Clone this project:  
 `git clone https://github.com/elmart/biicodemaps.git`.
-- Run tests to see everything is ok.  
-`cd biicodemaps`  
-`py.test`
 - Install this package:  
+`cd biicodemaps`  
 `pip install -e .`
-
+- Run tests to see everything is ok.  
+`py.test`
 
 ## Examples
 
